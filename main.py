@@ -1,15 +1,53 @@
 from src.pdf_loader import extract_pages
+from src.chunker import create_chunks
+import json
 
 
 PDF_PATH = "data/Deep learning.pdf"
 
 
+# Step 1: Extract text from PDF
 pages = extract_pages(PDF_PATH)
 
-print("Number of pages:", len(pages))
+print("\n============================")
+print("PDF PROCESSING COMPLETE")
+print("============================")
 
-for page in pages[:3]:
+print("Pages with text:", len(pages))
 
-    print("\n====================")
-    print("PAGE:", page["page_number"])
-    print(page["text"][:500])
+
+# Step 2: Create chunks
+chunks = create_chunks(pages)
+
+print("\n============================")
+print("CHUNKING COMPLETE")
+print("============================")
+
+print("Total chunks:", len(chunks))
+
+
+# Step 3: Save chunks
+with open(
+    "vector_store/chunks.json",
+    "w",
+    encoding="utf-8"
+) as file:
+
+    json.dump(
+        chunks,
+        file,
+        ensure_ascii=False,
+        indent=4
+    )
+
+print("Chunks saved to vector_store/chunks.json")
+
+
+# Step 4: Show first 5 chunks
+for chunk in chunks[:5]:
+
+    print("\n----------------------------")
+    print("Chunk ID:", chunk["chunk_id"])
+    print("Page:", chunk["page_number"])
+    print("Text:")
+    print(chunk["text"][:300])
